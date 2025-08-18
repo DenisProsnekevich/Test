@@ -27,7 +27,7 @@
                 <td>{{ book.title }}</td>
                 <td>{{ book.author }}</td>
                 <td>{{ book.publishedAt ? book.publishedAt|date('Y-m-d') : '' }}</td>
-                <td>{{ book.description }}</td>
+                <td>{{ book.description|u.truncate(150, '...') }}</td>
                 <td>{{ book.isbn }}</td>
 {#                <td>{{ book.category.name|default('No category') }}</td>#}
                 <td>{{ book.category|default('No category') }}</td>

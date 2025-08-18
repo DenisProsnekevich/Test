@@ -32,7 +32,7 @@
             </tr>
             <tr>
                 <th>Description</th>
-                <td>{{ book.description }}</td>
+                <td>{{ book.description|u.truncate(300, '...') }}</td>
             </tr>
             <tr>
                 <th>Isbn</th>

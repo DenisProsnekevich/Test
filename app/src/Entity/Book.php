@@ -23,7 +23,8 @@ class Book
     #[Assert\NotBlank]
     private ?string $author = null;
 
-    #[ORM\Column(length: 80, nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true)]
+    #[Assert\Length(max: 4000, maxMessage: "The description should not exceed 4000 characters.")]
     private ?string $description = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]

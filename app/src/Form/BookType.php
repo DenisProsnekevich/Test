@@ -22,21 +22,14 @@ class BookType extends AbstractType
             ])
             ->add('description', TextareaType::class, [
                 'trim' => true,
+                'attr' => [
+                    'rows' => 10,
+                    'maxlength' => 4000,
+                ]
             ])
             ->add('isbn')
             ->add('category')
         ;
-
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
-            $data = $event->getData();
-
-            if (isset($data['description'])) {
-                $data['description'] = substr($data['description'], 0, 80);
-            }
-
-            // Update the event with the modified data
-            $event->setData($data);
-        });
     }
 
     public function configureOptions(OptionsResolver $resolver): void
