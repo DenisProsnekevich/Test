@@ -12,7 +12,7 @@ class Book
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\Column(type: 'integer', options: ['unsigned' => true])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
@@ -34,6 +34,9 @@ class Book
     #[Assert\NotBlank]
     #[Assert\Regex(pattern: '/^\d{13}$/', message: 'The ISBN must be a valid ISBN-13 numbers format.')]
     private ?string $isbn = null;
+
+    #[ORM\ManyToOne(inversedBy: 'books')]
+    private ?Category $category = null;
 
     public function getId(): ?int
     {
@@ -96,6 +99,18 @@ class Book
     public function setIsbn(string $isbn): static
     {
         $this->isbn = $isbn;
+
+        return $this;
+    }
+
+    public function getCategory(): ?Category
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?Category $category): static
+    {
+        $this->category = $category;
 
         return $this;
     }

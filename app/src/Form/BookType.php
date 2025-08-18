@@ -24,6 +24,7 @@ class BookType extends AbstractType
                 'trim' => true,
             ])
             ->add('isbn')
+            ->add('category')
         ;
 
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {

@@ -16,6 +16,7 @@
                 <th>PublishedAt</th>
                 <th>Description</th>
                 <th>Isbn</th>
+                <th>Category</th>
                 <th>actions</th>
             </tr>
         </thead>
@@ -28,6 +29,8 @@
                 <td>{{ book.publishedAt ? book.publishedAt|date('Y-m-d') : '' }}</td>
                 <td>{{ book.description }}</td>
                 <td>{{ book.isbn }}</td>
+{#                <td>{{ book.category.name|default('No category') }}</td>#}
+                <td>{{ book.category|default('No category') }}</td>
                 <td>
                     <a href="{{ path('app_book_show', {'id': book.id}) }}">show</a>
                     <a href="{{ path('app_book_edit', {'id': book.id}) }}">edit</a>
