@@ -34,7 +34,13 @@ final class CategoryController extends AbstractController
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $category = new Category();
-        $form = $this->createForm(CategoryType::class, $category);
+
+        $availableParents = $this->categoryService->findAllExcludingCategoryAndDescendants(null);
+
+        $form = $this->createForm(CategoryType::class, $category, [
+            'available_parents' => $availableParents,
+        ]);
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -49,6 +55,7 @@ final class CategoryController extends AbstractController
             'form' => $form,
         ]);
     }
+
 
     #[Route('/{id}', name: 'app_category_show', methods: ['GET'])]
     public function show(Category $category): Response

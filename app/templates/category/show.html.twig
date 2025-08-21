@@ -22,6 +22,14 @@
                 <th>Title</th>
                 <td>{{ category.name }}</td>
             </tr>
+            {% if category.parent %}
+            <tr>
+                <th>Parent Category</th>
+                <td>
+                    {{ category.parent }}
+                </td>
+            </tr>
+            {% endif %}
         </tbody>
     </table>
 

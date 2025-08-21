@@ -40,7 +40,13 @@
             </tr>
             <tr>
                 <th>Category</th>
-                <td>{{ book.category }}</td>
+                <td>
+                    {% if book.category %}
+                        {{ book.category.name }}
+                    {% else %}
+                        No category
+                    {% endif %}
+                </td>
             </tr>
         </tbody>
     </table>
