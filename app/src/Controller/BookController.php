@@ -63,6 +63,7 @@ final class BookController extends AbstractController
     public function edit(Request $request, Book $book, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(BookType::class, $book);
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -73,7 +74,7 @@ final class BookController extends AbstractController
 
         return $this->render('book/edit.html.twig', [
             'book' => $book,
-            'form' => $form,
+            'form' => $form->createView(),
         ]);
     }
 

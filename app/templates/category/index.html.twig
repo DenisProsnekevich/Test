@@ -17,32 +17,9 @@
 
     <a href="{{ path('app_category_new') }}" class="btn btn-secondary float-end">Create new</a>
 
-    <table class="table table-striped mt-3">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Name</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for category in pagination %}
-            <tr>
-                <td>{{ category.id }}</td>
-                <td>{{ category.name }}</td>
-                <td>
-                    <a href="{{ path('app_category_show', {'id': category.id}) }}">show</a>
-                    <a href="{{ path('app_category_edit', {'id': category.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="7">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-    <div class="navigation float-end">
-        {{ knp_pagination_render(pagination) }}
-    </div>
+    {% if categories is empty %}
+        <div class="alert alert-info">No categories found.</div>
+    {% else %}
+        {{ include('category/_tree.html.twig', { categories: categories }) }}
+    {% endif %}
 {% endblock %}

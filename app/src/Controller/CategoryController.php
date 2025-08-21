@@ -4,10 +4,9 @@ namespace App\Controller;
 
 use App\Entity\Category;
 use App\Form\CategoryType;
-use App\Repository\BookRepository;
 use App\Repository\CategoryRepository;
+use App\Services\CategoryService;
 use Doctrine\ORM\EntityManagerInterface;
-use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,19 +15,18 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/category')]
 final class CategoryController extends AbstractController
 {
-    #[Route(name: 'app_category_index', methods: ['GET'])]
-    public function index(CategoryRepository $categoryRepository, PaginatorInterface $paginator, Request $request): Response
-    {
-        $query = $categoryRepository->createQueryBuilder('b')->getQuery();
+    public function __construct(
+        private readonly CategoryService $categoryService
+    ) {
+    }
 
-        $pagination = $paginator->paginate(
-            $query,
-            $request->query->getInt('page', 1),
-            10
-        );
+    #[Route(name: 'app_category_index', methods: ['GET'])]
+    public function index(CategoryRepository $categoryRepository): Response
+    {
+        $rootCategories = $categoryRepository->findBy(['parent' => null]);
 
         return $this->render('category/index.html.twig', [
-            'pagination' => $pagination,
+            'categories' => $rootCategories,
         ]);
     }
 
@@ -63,10 +61,16 @@ final class CategoryController extends AbstractController
     #[Route('/{id}/edit', name: 'app_category_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Category $category, EntityManagerInterface $entityManager): Response
     {
-        $form = $this->createForm(CategoryType::class, $category);
+        $availableParents = $this->categoryService->findAllExcludingCategoryAndDescendants($category);
+
+        $form = $this->createForm(CategoryType::class, $category, [
+            'available_parents' => $availableParents,
+        ]);
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->persist($category);
             $entityManager->flush();
 
             return $this->redirectToRoute('app_category_show', ['id' => $category->getId()], Response::HTTP_SEE_OTHER);
@@ -74,23 +78,16 @@ final class CategoryController extends AbstractController
 
         return $this->render('category/edit.html.twig', [
             'category' => $category,
-            'form' => $form,
+            'form' => $form->createView(),
         ]);
     }
 
     #[Route('/{id}', name: 'app_category_delete', methods: ['POST'])]
-    public function delete(Request $request, Category $category, EntityManagerInterface $entityManager, BookRepository $bookRepository): Response
+    public function delete(Request $request, Category $category): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$category->getId(), $request->getPayload()->getString('_token'))) {
-            $books = $bookRepository->count(['category' => $category]);
-
-            if ($books > 0) {
-                $this->addFlash('error', 'Cannot delete category while being used in books.');
-            } else {
-                $entityManager->remove($category);
-                $entityManager->flush();
-                $this->addFlash('success', 'Category successfully deleted.');
-            }
+        if ($this->isCsrfTokenValid('delete' . $category->getId(), $request->getPayload()->getString('_token'))) {
+            $result = $this->categoryService->tryDelete($category);
+            $this->addFlash($result['success'] ? 'success' : 'error', $result['message']);
         }
 
         return $this->redirectToRoute('app_category_index', [], Response::HTTP_SEE_OTHER);

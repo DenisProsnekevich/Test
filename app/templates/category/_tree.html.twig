@@ -1,0 +1,15 @@
+<ul class="list-group">
+    {% for category in categories %}
+        <li class="list-group-item">
+            <strong>{{ category.name }}</strong>
+            <div class="float-end">
+                <a href="{{ path('app_category_show', {'id': category.id}) }}">show</a>
+                <a href="{{ path('app_category_edit', {'id': category.id}) }}">edit</a>
+            </div>
+
+            {% if category.children|length > 0 %}
+                {{ include('category/_tree.html.twig', { categories: category.children }) }}
+            {% endif %}
+        </li>
+    {% endfor %}
+</ul>
