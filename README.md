@@ -130,3 +130,6 @@ This will allow you to view the application.
 3. Removed the trimming logic from the form submission process.
 4. Added a `maxlength` attribute in both the form and entity validation. If validation fails, a warning message is displayed.
 5. Included a warning in the Twig template to inform users of the maximum allowed length.
+
+
+Spent time: ~12h
